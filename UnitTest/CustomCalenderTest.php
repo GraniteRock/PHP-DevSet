@@ -13,6 +13,12 @@ class CustomCalenderTest extends PHPUnit_Framework_TestCase
 {
     private $calender;
 
+    private $datetime_format = array(
+        "d","D","j","l ","N","S","w","z","W","F","m","M","n","t","L","o",
+        "Y","y","a","A","B","g","G","h","H","i","s","u","v","e","I","O",
+        "P","T","Z","c","r","U"
+    );
+
     public function setUp()
     {
         $this->calender = new CustomCalender();
@@ -78,5 +84,27 @@ class CustomCalenderTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    function testToday(){
+        $today = new DateTime();
+
+        $this->assertEquals($this->calender->getToday(),$today->format('Y-m-d'));
+        foreach($this->datetime_format as $val){
+            $this->assertEquals($this->calender->getToday($val),$today->format( $val));
+        }
+    }
+
+    function testIsToday($year="", $month="", $day="") {
+        $today = new DateTime();
+        $year  = $today->format('Y');
+        $month = $today->format('m');
+        $day   = $today->format('d');
+
+
+        $this->calender->getToday();
+
+        $today = $this->getToday('Y-m-d');
+
+        return $today == $this->getConstructYMD($year,$month,$day) ? true : false;
+    }
 
 }
