@@ -59,7 +59,7 @@ class CustomCalenderTest extends PHPUnit_Framework_TestCase
         $month = sprintf("%02d", $month);
         $day   = sprintf("%02d", $day);
 
-        $check = $method->invoke($this->calender,'2017','06','13');
+        $check = $method->invoke($this->calender,$year,$month,$day);
         $this->assertEquals($year.'-'.$month.'-'.$day,$check);
 
     }
@@ -93,18 +93,82 @@ class CustomCalenderTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    function testIsToday($year="", $month="", $day="") {
+    function testIsToday() {
         $today = new DateTime();
         $year  = $today->format('Y');
         $month = $today->format('m');
         $day   = $today->format('d');
+        $this->assertNotFalse($this->calender->isToday($year,$month,$day));
 
 
-        $this->calender->getToday();
+        $year='2017';
+        $month='05';
+        $day='12';
 
-        $today = $this->getToday('Y-m-d');
-
-        return $today == $this->getConstructYMD($year,$month,$day) ? true : false;
+        $this->assertFalse($this->calender->isToday($year,$month,$day));
     }
 
+    function testMonday(){
+
+        $today = new DateTime();
+        # もし週始まりを月曜日にするなら、$w + 1　にすればいいはずです
+        $w = $today->format('w');
+
+        $today->modify(sprintf("-%d days",($w-1)));
+
+        $this->assertEquals($this->calender->getMonday(),$today->format( 'Ymd'));
+
+        $today = new DateTime('2016-01-05');
+        # もし週始まりを月曜日にするなら、$w + 1　にすればいいはずです
+        $w = $today->format('w');
+
+        $today->modify(sprintf("-%d days",($w-1)));
+
+        $this->assertEquals($this->calender->getMonday('Ymd','2016','01','05'),$today->format( 'Ymd'));
+    }
+
+    function testSunday(){
+
+        $today = new DateTime();
+
+        $w = $today->format('w');
+
+        $today->modify(sprintf("-%d days",($w)));
+
+        $this->assertEquals($this->calender->getSunday(),$today->format( 'Ymd'));
+
+        $today = new DateTime('2016-01-05');
+        # もし週始まりを月曜日にするなら、$w + 1　にすればいいはずです
+        $w = $today->format('w');
+
+        $today->modify(sprintf("-%d days",($w)));
+
+        $this->assertEquals($this->calender->getSunday('Ymd','2016','01','05'),$today->format( 'Ymd'));
+    }
+
+    function testDiffDay(){
+
+        $date = new DateTime();
+
+        for ($i=0;$i < 10;$i++){
+            $date->modify(sprintf("-%d days",($i)));
+
+            $year  = $date->format('Y');
+            $month = $date->format('m');
+            $day   = $date->format('d');
+
+            $this->assertEquals($date->format( 'Ymd'),$this->calender->getDiffDay('-'.$i,$year,$month,$day));
+        }
+
+        for ($i=0;$i < 10;$i++){
+            $date->modify(sprintf("+%d days",($i)));
+
+            $year  = $date->format('Y');
+            $month = $date->format('m');
+            $day   = $date->format('d');
+
+            $this->assertEquals($date->format( 'Ymd'),$this->calender->getDiffDay('+'.$i,$year,$month,$day));
+        }
+
+    }
 }
