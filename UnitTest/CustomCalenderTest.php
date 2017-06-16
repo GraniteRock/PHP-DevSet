@@ -171,4 +171,32 @@ class CustomCalenderTest extends PHPUnit_Framework_TestCase
         }
 
     }
+
+    function testCompareDatetime(){
+        $date = new Datetime();
+        $compare = $this->calender->getCompareDatetime($date->format('Y-m-d'),$date->format('Y-m-d'));
+
+        $this->assertTrue($compare == 0,'OK');
+
+
+        $compare = $this->calender->getCompareDatetime($date->format('Y-m-d'),'2017-11-05');
+        $this->assertFalse($compare == 0,'OK');
+
+        foreach ($this->datetime_format as $fmt){
+            $compare = $this->calender->getCompareDatetime($date->format('Y-m-d'),$date->format('Y-m-d'),$fmt);
+
+
+            $this->assertTrue($compare == 0,'OK');
+        }
+
+        $today_date = $date->modify("0 days");
+        $add_date = $date->modify("+1 days");
+
+        foreach ($this->datetime_format as $fmt){
+
+            $compare = $this->calender->getCompareDatetime($today_date->format('Y-m-d h:i:s'),$add_date->format('Y-m-d h:i:s'),$fmt);
+
+            $this->assertTrue($compare == 0,'OK');
+        }
+    }
 }

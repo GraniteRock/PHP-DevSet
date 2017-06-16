@@ -163,4 +163,19 @@ class CustomCalender{
         $next_prev->modify($n);
         return $next_prev->format('Ymd');
     }
+
+    /**
+     * @param string $date_str_base 基準日時文字列
+     * @param string $date_str_comp 比較対象日時文字列
+     * @param string $fmt 書式
+     * @return int
+     */
+    function getCompareDatetime($date_str_base='', $date_str_comp='', $fmt='a'){
+        $date_base = new DateTime($date_str_base);
+        $date_comp = new DateTime($date_str_comp);
+
+        $diff = $date_base->diff($date_comp);
+
+        return $diff->format('%'.$fmt);
+    }
 }
